@@ -14,6 +14,12 @@ class Reminder(db.Model):
     content = db.Column(db.String(500), nullable=False)
     done = db.Column(db.Boolean, default=False)
 
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    day = db.Column(db.String(10), nullable=False)
+    time = db.Column(db.String(10), nullable=False)
+    content = db.Column(db.String(500), nullable=False)
+
 with app.app_context():
     db.create_all()    
 
@@ -65,6 +71,30 @@ def delete_reminder(reminder_id):
     db.session.delete(reminder)
     db.session.commit()
     return redirect(url_for("reminders_page"))
+
+@app.route("/schedule")
+def schedule_page():
+    events = Event.query.all()
+    return render_template("schedule.html", events=events)
+
+@app.route("/schedule/add", methods=["POST"])
+def add_event():
+    day = request.form.get("day")
+    time = request.form.get("time")
+    content = request.form.get("content")
+    if day and time and content:
+        new_event = Event(day=day, time=time, content=content)
+        db.session.add(new_event)
+        db.session.commit()
+    return redirect(url_for("schedule_page"))
+
+@app.route("/schedule/delete/<int:event_id>", methods=["POST"])
+def delete_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    db.session.delete(event)
+    db.session.commit()
+    return redirect(url_for("schedule_page"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
