@@ -1,37 +1,39 @@
-<!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <meta charset=""UTF-8">
-        <title>Reminders</title>
-    </head>
-    <body>
-        <h1>Reminders</h1>
+{% extends "base.html" %} {% block title %}Reminders{% endblock %} {% block
+content %}
+<h1>My Reminders</h1>
 
-        <form action="/reminders/add" method="POST">
-            <input type="text" name="content" placeholder="Add a reminder..." required>
-            <button type="submit">Add</button>
-        </form>
+<form action="/reminders/add" method="POST">
+  <input type="text" name="content" placeholder="Write a reminder..." />
+  <button type="submit">Add Reminder</button>
+</form>
 
-        <ul>
-            {% for reminder in reminders %}
-                <li>
-                    <form action="/reminders/toggle/{{ reminder.id }}" method="POST" style="display:inline;">
-                        <button type="submit">
-                            {% if reminder.done %}✅{% else %}⬜{% endif %}
-                        </button>
-                    </form>
+<ul>
+  {% for reminder in reminders %}
+  <li>
+    <form
+      action="/reminders/toggle/{{ reminder.id }}"
+      method="POST"
+      style="display: inline"
+    >
+      <button type="submit">
+        {% if reminder.done %}✅{% else %}⬜{% endif %}
+      </button>
+    </form>
 
-                    <span style="text-decoration: {% if reminder.done %}line-through{% else %}none{% endif %};">
-                        {{ reminder.content }}
-                    </span>
+    <span
+      style="text-decoration: {% if reminder.done %}line-through{% else %}none{% endif %};"
+    >
+      {{ reminder.content }}
+    </span>
 
-                    <form action="/reminders/delete/{{ reminder.id }}" method="POST" style="display:inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <a href="/">Back to Notes</a>
-    </body>
-</html>
+    <form
+      action="/reminders/delete/{{ reminder.id }}"
+      method="POST"
+      style="display: inline"
+    >
+      <button type="submit">Delete</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

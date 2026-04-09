@@ -1,28 +1,23 @@
-<!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Noted</title>
-    </head>
-    <body>
-        <h1>My Notes</h1>
-        <a href="/reminders">Go to Reminders</a>
-        <a href="/schedule">Go to Schedule</a>
+{% extends "base.html" %}
 
-        <form action="/add" method="POST">
-            <input type="text" name="content" placeholder="Write a note...">
-            <button type="submit">Add Note</button>
-        </form>
+{% block title %}Notes{% endblock %}
 
-        <ul>
-            {% for note in notes %}
-                <li>{{ note.content }}
-                    <form action="/delete/{{note.id}}" method = "POST" style="display:inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-    
-    </body>
-</html>
+{% block content %}
+    <h1>My Notes</h1>
+
+    <form action="/add" method="POST">
+        <input type="text" name="content" placeholder="Write a note...">
+        <button type="submit">Add Note</button>
+    </form>
+
+    <ul>
+        {% for note in notes %}
+            <li>
+                {{ note.content }}
+                <form action="/delete/{{ note.id }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
