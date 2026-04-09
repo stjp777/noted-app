@@ -74,7 +74,7 @@ def delete_reminder(reminder_id):
 
 @app.route("/schedule")
 def schedule_page():
-    events = Event.query.all()
+    events = Event.query.order_by(Event.day, Event.time).all()
     return render_template("schedule.html", events=events)
 
 @app.route("/schedule/add", methods=["POST"])
