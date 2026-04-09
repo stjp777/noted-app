@@ -9,6 +9,11 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(500), nullable=False)
 
+class Reminder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(500), nullable=False)
+    done = db.Column(db.Boolean, default=False)
+
 with app.app_context():
     db.create_all()    
 
@@ -32,6 +37,34 @@ def delete_note(note_id):
     db.session.delete(note)
     db.session.commit()
     return redirect(url_for("home"))
+
+@app.route("/reminders")
+def reminders_page():
+    reminders = Reminder.query.all()
+    return render_template("reminders.html", reminders=reminders)
+
+@app.route("/reminders/add", methods=["POST"])
+def add_reminder():
+    content = request.form.get("content")
+    if content:
+        new_reminder = Reminder(content=content)
+        db.session.add(new_reminder)
+        db.session.commit()
+    return redirect(url_for("reminders_page"))
+
+@app.route("/reminders/toggle/<int:reminder_id>", methods=["POST"]) 
+def toggle_reminder(reminder_id):
+    reminder = Reminder.query.get_or_404(reminder_id)
+    reminder.done = not reminder.done
+    db.session.commit()
+    return redirect(url_for("reminders_page"))
+
+@app.route("/reminders/delete/<int:reminder_id>", methods=["POST"])
+def delete_reminder(reminder_id):
+    reminder = Reminder.query.get_or_404(reminder_id)
+    db.session.delete(reminder)
+    db.session.commit()
+    return redirect(url_for("reminders_page"))
 
 if __name__ == "__main__":
     app.run(debug=True)
